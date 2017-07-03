@@ -1,3 +1,9 @@
+
+const int redLedPin = 6;
+const int yellowLedPin = 9;
+const int greenLedPin = 12;
+
+// Reads power supply voltage and returns it as millivolt
 long readVcc() {
   long result;
   // Read 1.1V reference against AVcc
@@ -13,9 +19,33 @@ long readVcc() {
 
 void setup() {
   Serial.begin(9600);
+
+  pinMode(greenLedPin, OUTPUT);
+  pinMode(yellowLedPin, OUTPUT);
+  pinMode(redLedPin, OUTPUT);
+
+  // switch on, one by one
+  digitalWrite(greenLedPin, HIGH);
+  delay(500);
+  digitalWrite(yellowLedPin, HIGH);
+  delay(500);
+  digitalWrite(redLedPin, HIGH);
+  delay(500);
+
+  // turn off leds but leave on red (= power "on")
+  digitalWrite(greenLedPin, LOW);
+  digitalWrite(yellowLedPin, LOW);
 }
 
 void loop() {
-  Serial.println( readVcc(), DEC );
-  delay(1000);
+  //Serial.println( readVcc(), DEC );
+  //delay(1000);
+
+  if(readVcc() > 7400){
+    digitalWrite(greenLedPin, HIGH);
+    digitalWrite(yellowLedPin, LOW);
+  } else {
+    digitalWrite(greenLedPin, LOW);
+    digitalWrite(yellowLedPin, HIGH);
+  }
 }
