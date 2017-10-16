@@ -112,10 +112,12 @@ app.config(function ($mdThemingProvider) {
   </style>
 </head>
 <body ng-app="TeV" ng-controller="LandingCtrl" ng-cloak layout-align="center center" data-ng-init="triggerLanding();">
-
+    <img src="images/logo_classic@2x.png" alt=""/>
+    <img src="images/Middel 1@2x.png" alt=""/>
+    <img src="images/logo_classic_white@2x.png" alt=""/>
     <div layout="row" layout-align="center center" class="md-padding gradientBg">
         <div flex layout="column" layout-align="center center">
-            <img src="img/logo_classic@2x.png" alt=""/>
+            <img src="/images/logo_classic@2x.png" alt=""/>
             <div layout="row" layout-align="center center" class="md-display-1" style="color: #666; font-style: italic; text-align: right;">
                 <br />The fondest memories are made around the table<br />
                 - the TeV team<br/><br/>
@@ -185,49 +187,64 @@ People like you who love to share their stories of living and passion for food a
         <ng-md-icon icon="restaurant" md-colors="{fill: 'warn'}"></ng-md-icon><br />
     </div>
     
-    <div >
-        <md-card layout="column" layout-align="center center"  style="float: left; text-align: center; height: 300px; width: 550px; background: url('http://www.tableenville.com/themes/tenv_default/img/cuis3.jpg') no-repeat; background-size: cover;">
-            <md-card-content class="md-display-1 bordered" style="color: #eee; font-style: italic; background-color: rgba(64, 64, 64, 0.5); width: 100%;">
-                Social dining for expats
-            </md-card-content>
-        </md-card>
-        
-        <md-card layout="column" layout-align="center center"  style="float: left; text-align: center; height: 300px; width: 550px; background: url('http://www.tableenville.com/themes/tenv_default/img/cuis6.jpg') no-repeat; background-size: cover;">
-            <md-card-content class="md-display-1 bordered" style="color: #eee; font-style: italic; background-color: rgba(64, 64, 64, 0.5); width: 100%;">
-                Good times with friends
-            </md-card-content>
-        </md-card>
-        
+    <md-grid-list
+        md-cols-xs="1" md-cols-sm="2" md-cols-md="2" md-cols-gt-md="3"
+        md-row-height-gt-md="1.5:1" md-row-height="1:1">
+
+    <md-grid-tile class="gray">
         <md-card layout="column" layout-align="center center"  style="float: left; text-align: center; height: 300px; width: 550px; background: url('http://www.tableenville.com/themes/tenv_default/img/cuis2.jpg') no-repeat; background-size: cover;">
             <md-card-content class="md-display-1 bordered" style="color: #eee; font-style: italic; background-color: rgba(64, 64, 64, 0.5); width: 100%;">
                 Share a table with new people
             </md-card-content>
         </md-card>
-        
-        <md-card layout="column" layout-align="center center"  style="float: left; text-align: center; height: 300px; width: 550px; background: url('http://www.tableenville.com/themes/tenv_default/img/cuis5.jpg') no-repeat; background-size: cover;">
+    </md-grid-tile>
+
+    <md-grid-tile class="green">
+      <md-card layout="column" layout-align="center center"  style="float: left; text-align: center; height: 300px; width: 550px; background: url('http://www.tableenville.com/themes/tenv_default/img/cuis3.jpg') no-repeat; background-size: cover;">
+            <md-card-content class="md-display-1 bordered" style="color: #eee; font-style: italic; background-color: rgba(64, 64, 64, 0.5); width: 100%;">
+                Social dining for expats
+            </md-card-content>
+        </md-card>
+    </md-grid-tile>
+
+    <md-grid-tile class="yellow">
+      <md-card layout="column" layout-align="center center"  style="float: left; text-align: center; height: 300px; width: 550px; background: url('http://www.tableenville.com/themes/tenv_default/img/cuis6.jpg') no-repeat; background-size: cover;">
+            <md-card-content class="md-display-1 bordered" style="color: #eee; font-style: italic; background-color: rgba(64, 64, 64, 0.5); width: 100%;">
+                Good times with friends
+            </md-card-content>
+        </md-card>
+    </md-grid-tile>
+
+    <md-grid-tile class="red">
+      <md-card layout="column" layout-align="center center"  style="float: left; text-align: center; height: 300px; width: 550px; background: url('http://www.tableenville.com/themes/tenv_default/img/cuis5.jpg') no-repeat; background-size: cover;">
             <md-card-content class="md-display-1 bordered" style="color: #eee; font-style: italic; background-color: rgba(64, 64, 64, 0.5); width: 100%;">
                 Enjoy life with good food
             </md-card-content>
         </md-card>
-        
-        <md-card layout="column" layout-align="center center"  style="float: left; text-align: center; height: 300px; width: 550px; background: url('http://www.tableenville.com/themes/tenv_default/img/cuis1.jpg') no-repeat; background-size: cover;">
+    </md-grid-tile>
+
+    <md-grid-tile class="green" >
+      <md-card layout="column" layout-align="center center"  style="float: left; text-align: center; height: 300px; width: 550px; background: url('http://www.tableenville.com/themes/tenv_default/img/cuis1.jpg') no-repeat; background-size: cover;">
             <md-card-content class="md-display-1 bordered" style="color: #eee; font-style: italic; background-color: rgba(64, 64, 64, 0.5); width: 100%;">
                 Meet passionate hosts
             </md-card-content>
-        </md-card>
+        </md-card>  
+    </md-grid-tile>
         
-        <md-card layout="column" layout-align="center center"  style="float: left; text-align: center; height: 300px; width: 550px; background: url('http://www.tableenville.com/themes/tenv_default/img/cuis4.jpg') no-repeat; background-size: cover;">
+        <md-grid-tile class="green" >
+       <md-card layout="column" layout-align="center center"  style="float: left; text-align: center; height: 300px; width: 550px; background: url('http://www.tableenville.com/themes/tenv_default/img/cuis4.jpg') no-repeat; background-size: cover;">
             <md-card-content class="md-display-1 bordered" style="color: #eee; font-style: italic; background-color: rgba(64, 64, 64, 0.5); width: 100%;">
                 Explore a global food culture
             </md-card-content>
         </md-card>
+    </md-grid-tile>
+
+  </md-grid-list>
         
-        <md-card layout="column" layout-align="center center"  style="float: none; text-align: center; height: 0px; width: 550px; background: url('http://www.tableenville.com/themes/tenv_default/img/cuis4.jpg') no-repeat; background-size: cover;">
-            
-        </md-card>
-    </div>
-    <div style="float: none;"><br /><br /></div>
     <div flex-gt-xs></div>
+    
+    
+    
     <div layout="row" layout-align="center center">contact@tableenville.com | &copy; 2017 Table en Ville | all rights reserved |&nbsp; <i class="fa fa-instagram" aria-hidden="true"></i>&nbsp;<i class="fa fa-facebook" aria-hidden="true"></i>&nbsp;<i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<br /><br /></div>
     
     
@@ -290,7 +307,7 @@ People like you who love to share their stories of living and passion for food a
                     <md-button ng-click="answer('cancel')">
                         Cancel
                     </md-button>
-                    <md-button type="submit" ng-click=":  submit();" style="margin-right:20px;" class="md-raised md-warn" ng-disabled="loginForm.$invalid">
+                    <md-button type="submit" ng-click="submit();" style="margin-right:20px;" class="md-raised md-warn" ng-disabled="loginForm.$invalid">
                         Send
                     </md-button>
                 </md-dialog-actions>
