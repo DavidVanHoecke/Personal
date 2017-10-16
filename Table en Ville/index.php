@@ -112,12 +112,9 @@ app.config(function ($mdThemingProvider) {
   </style>
 </head>
 <body ng-app="TeV" ng-controller="LandingCtrl" ng-cloak layout-align="center center" data-ng-init="triggerLanding();">
-    <img src="images/logo_classic@2x.png" alt=""/>
-    <img src="images/Middel 1@2x.png" alt=""/>
-    <img src="images/logo_classic_white@2x.png" alt=""/>
     <div layout="row" layout-align="center center" class="md-padding gradientBg">
         <div flex layout="column" layout-align="center center">
-            <img src="/images/logo_classic@2x.png" alt=""/>
+            <img src="images/logo_classic@2x.png" alt=""/>
             <div layout="row" layout-align="center center" class="md-display-1" style="color: #666; font-style: italic; text-align: right;">
                 <br />The fondest memories are made around the table<br />
                 - the TeV team<br/><br/>
