@@ -33,9 +33,7 @@
                     dialogShowAdvanced(null, false, "landing-template.html", $scope, $mdMedia, $mdDialog);
                 }
                 
-                //$scope.guest = {email: "david.vanhoecke@delair-tech.com", nameFirst: "David", nameLast : "Van Hoecke"};
-                
-                $scope.mailSent = false;
+                $scope.guest = {email: "david.vanhoecke@delair-tech.com", nameFirst: "David", nameLast : "Van Hoecke"};
 
                 $scope.sendMail = function(msg){
                     var body = "Hi,\n\rThe following data was filled into the landing page form:\n\r";
@@ -43,8 +41,6 @@
                     body += "First name: " + msg.nameFirst + "\n";
                     body += "Last name: " + msg.nameLast + "\n";
                     body += "phone: " + msg.phone + "\n";
-                    body += "comments: " + msg.comments + "\n\r";
-                    body += "excel friendly: \n" + msg.email + ";" + msg.nameFirst + ";" + msg.nameLast + ";" + msg.phone + ";" + msg.comments + "\n\r";
                     
                     var mail = {
                         to: "david.vanhoecke@delair-tech.com",
@@ -53,12 +49,7 @@
                     }
                     
                     mailService.doCmd(mail).then(function(response){
-                        $scope.mailSent = true;
-                        msg = null;
-                        $scope.guest = null;
-                        sleep(2000).then(function(){
-                        $mdDialog.hide();    
-                        });                       
+                        //alert(response);
                     }, function(err){
                         alert(err);
                     });
@@ -89,10 +80,6 @@
                     }).accentPalette('orange');
             $mdThemingProvider.theme('input', 'default').primaryPalette('grey');
             });
-            
-            function sleep(time) {
-                return new Promise((resolve) => setTimeout(resolve, time));
-            }
             
             function dialogShowAdvanced(ev, clickOutsideToClose, template, $scope, $mdMedia, $mdDialog) {
                 var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))&& $scope.customFullscreen;
@@ -161,22 +148,6 @@
 
             div{
                 color: #333;
-            }
-            
-            .infoContainer {
-                font-size: 0.9em;
-                margin: 40px 0px 20px;
-                color: #013972;
-                background-color: rgba(156, 204, 101, 1);
-                padding: 20px;
-            }
-
-            .errorContainer {
-                font-size: 0.9em;
-                margin: 40px 0px 20px;
-                color: #9f0000;
-                background-color: rgba(255, 154, 102, 1);
-                padding: 20px;
             }
 
         </style>
@@ -337,28 +308,23 @@
                     <h1  md-colors="{color: 'primary'}" style="color: #fff;" >Drop us a line and we'll get back to you.</h1>
                 </div>
                 <div flex-gt-xs="50" style="background-color: rgba(255,255,255,0.8); border-radius: 10px;">
-                    <div ng-show="mailSent" class='infoContainer'>Details received, thank you!</div>
                     <md-dialog-content>
                         <div class="md-dialog-content" layout="column">
-                            <md-input-container class="md-block"  style="line-height:14px; height: 20px;">
+                            <md-input-container class="md-block">
                                 <label>User email</label>
                                 <input name="email" required type="email" ng-model="guest.email" md-autofocus required />
                             </md-input-container>
-                            <md-input-container class="md-block" style="line-height:14px; height: 20px;">
+                            <md-input-container class="md-block" flex>
                                 <label>First name</label>
                                 <input type="text" name="nameFirst" ng-model="guest.nameFirst" />
                             </md-input-container>
-                            <md-input-container class="md-block" style="line-height:14px; height: 20px;">
+                            <md-input-container class="md-block" flex>
                                 <label>Last name</label>
                                 <input type="text" name="nameLast" ng-model="guest.nameLast" />
                             </md-input-container>
-                            <md-input-container class="md-block" style="line-height:14px; height: 20px;">
+                            <md-input-container class="md-block" flex>
                                 <label>Telephone nr</label>
                                 <input name="phone" ng-model="guest.phone" />
-                            </md-input-container>
-                            <md-input-container class="md-block">
-                                <label>Comment / questions</label>
-                                <textarea cols="15" rows='3' ng-model="guest.comments"></textarea>
                             </md-input-container>
                         </div>
                     </md-dialog-content>
@@ -379,13 +345,13 @@
     </md-dialog>
     <?php echo '</script>' ?>
 
-<!--
+
     <img src="http://www.tableenville.com/themes/tenv_default/img/cuis1.jpg">
     <img src="http://www.tableenville.com/themes/tenv_default/img/cuis2.jpg">
     <img src="http://www.tableenville.com/themes/tenv_default/img/cuis3.jpg">
     <img src="http://www.tableenville.com/themes/tenv_default/img/cuis4.jpg">
     <img src="http://www.tableenville.com/themes/tenv_default/img/cuis5.jpg">
     <img src="http://www.tableenville.com/themes/tenv_default/img/cuis6.jpg">
--->
+
 </body>
 </html>
