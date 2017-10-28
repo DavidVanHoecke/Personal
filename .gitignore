@@ -215,3 +215,6 @@ FakesAssemblies/
 **/*.Server/GeneratedArtifacts
 **/*.Server/ModelManifest.xml
 _Pvt_Extensions
+/Table en Ville/nbproject/private/
+/Table en Ville/tmp/nbproject/private/
+/Table en Ville/tmp/vendor/
