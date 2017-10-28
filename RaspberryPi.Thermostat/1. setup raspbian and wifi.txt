@@ -1,0 +1,21 @@
+- flash micro sd with raspbian
+- in windows explorer add files named "ssh" (no extension) and "wpa_supplicant.conf" to root of sd after flash
+- wpa_supplicant.conf contents:
+		ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+		update_config=1
+		country=BE
+
+		network={
+			ssid="NaamVanNetwerk"
+			psk="paswoord"
+			key_mgmt=WPA-PSK
+		}
+- put in Raspberry and boot it
+- check if ip is assigned for Raspberry in router or ISP admin pages, copy ip
+- connect over ssh, eg. with Putty
+- change password to "XXXXXXXX" (the usual)
+sudo passwd
+->enter current password
+->enter new password 2x
+
+- optional: install NO-IP DUC -> read 2. no-ip.txt

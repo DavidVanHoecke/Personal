@@ -1,0 +1,22 @@
+Default login Username: pi Password: raspberry
+
+Following commands must have "sudo " prefixed with default user
+
+shutdown 8:00
+Schedule the system to shut down at 8 A.M.
+
+shutdown 20:00
+Schedule the system to shut down at 8 P.M.
+
+shutdown +15 "Upgrading hardware, downtime should be minimal"
+Schedule the system to shut down in fifteen minutes. Along with the normal message alerting users that the system is shutting down, they will be given the descriptive message about a hardware upgrade.
+
+shutdown now
+Bring down the system immediately.
+
+shutdown -r now
+Bring down the system immediately, and automatically reboot it.
+
+shutdown -P now
+Bring down the system immediately, and automatically power off the system.
+

@@ -1,0 +1,23 @@
+1. Open Terminal and type the following. After each entry press “Enter“.   
+mkdir /home/pi/noip
+cd /home/pi/noip
+
+2. After creating the folders for the DUC it is time to download the software. Within the Terminal window  type the following. After each entry you will press “Enter”.
+wget http://www.no-ip.com/client/linux/noip-duc-linux.tar.gz
+tar vzxf noip-duc-linux.tar.gz
+
+3. Next navigate to the directory you created to locate the downloaded files.
+cd noip-2.1.9-1
+
+4. Now install the program.
+sudo make
+sudo make install
+
+5. After typing “sudo make install” you will be prompted to login with your No-IP account username and password.
+After logging into the DUC answer the questions to proceed. When asked how often you want the update to happen you must choose 5 or more. The interval is listed in minutes, if you choose 5 the update interval will be 5 minutes. If you choose 30 the interval will be 30 minutes.
+
+6. Start program
+sudo /usr/local/bin/noip2
+
+7. To confirm that the service is working properly you can run the following command.
+sudo noip2 -S 

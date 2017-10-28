@@ -1,0 +1,9 @@
+- First update raspbian
+sudo apt-get update
+sudo apt-get upgrade
+
+- install the apache2 package by typing the following command in to the Terminal:
+sudo apt-get install apache2 -y
+
+- install php
+sudo apt-get install php libapache2-mod-php -y

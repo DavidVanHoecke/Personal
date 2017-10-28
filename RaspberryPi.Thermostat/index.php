@@ -68,8 +68,10 @@
                         $scope.heatingOn = !$scope.heatingOn;
                         
                         $scope.desiredTemp = 15;
+                        $scope.status = "defrost";
                         if($scope.heatingOn == true){
                             $scope.desiredTemp = $scope.savedDesiredTemp;
+                            $scope.status = "heating";
                         }
                         
                         $scope.setTemp();
@@ -94,7 +96,7 @@
             })
             
             function showToast(content, $mdToast) {
-                $mdToast.show($mdToast.simple().textContent(content).parent(document.querySelectorAll('#tab1-content')).position('bottom left'));
+                $mdToast.show($mdToast.simple().textContent(content).parent(document.querySelectorAll('#tab1-content')).position('top left'));
             }
 
             function sleep(time) {
@@ -113,7 +115,7 @@
             }
          
             .gradBg{
-                background: linear-gradient(#eaeced, #999, #eaeced);
+                background: linear-gradient(#ccc, #666, #ccc);
             }
             
             .test{
@@ -183,11 +185,11 @@
                             </div>
                             <div layout="column" layout-align="center center" flex>
                                 <span class="md-accent">Current temp</span>
-                                <span class="md-display-2 padLeft" md-colors="{color: 'warn'}">{{temp}}°</span>
+                                <span class="md-display-2 padLeft" md-colors="{color: 'accent-700'}">{{temp}}°</span>
                             </div>                        
                             <div layout="column" layout-align="center center" flex>
-                                <span>Desired temp</span>
-                                <span class="md-display-2 padLeft" md-colors="{color: 'accent-700'}">{{desiredTemp}}°</span>
+                                <span class="md-accent">Desired temp</span>
+                                <span class="md-display-2 padLeft" md-colors="{color: 'warn'}">{{desiredTemp}}°</span>
                             </div>
                             <div flex="10"></div>
                         
@@ -212,41 +214,30 @@
             <!-- SHOW ON MOBILE -->
             <div flex layout="row" hide-gt-xs>
                 <div  layout="column" layout-align="center stretch">
-                    <div layout="row">
-                        <div flex="15"  layout="column" layout-align="center center" ng-init="selection = { selectedNode:  null }">
-                            <div class="md-whiteframe-2dp timeBlock md-caption" layout="column" ng-click="toggleTimeBlock(n)" ng-class="{selectedTimeBlock : selectedTimeBlocksArray.indexOf(n) !== -1}" layout-align="center center" ng-repeat="n in [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]">
-                                <div >
-                                    {{n}}:00
-                                </div>
-                            </div>
-                        </div>
-                        <div flex layout="row" layout-align="center center" class="noPadding">
-                            
-                            <div  layout="column" layout-align="center center">
-                                <div ><ng-md-icon icon="expand_less" size="128" md-colors="{fill: 'accent-700'}" aria-label="up" ng-click="changeTemp(true)"></ng-md-icon></div>
-                                <ng-md-icon icon="whatshot" size="200" md-colors="{fill: 'warn'}" aria-label="Heating" ng-show="heatingOn" ng-click="toggleHeating();"></ng-md-icon>
-                                <ng-md-icon icon="ac_unit" size="200" md-colors="{fill: 'cyan-700'}" aria-label="Defrost" ng-hide="heatingOn" ng-click="toggleHeating();"></ng-md-icon>
-                                <div ><ng-md-icon icon="expand_more" size="128" md-colors="{fill: 'accent-700'}" aria-label="down" ng-click="changeTemp(false)"></ng-md-icon></div>
-                            </div>
-                        </div>
-                        
+                    
+                    <div   layout="column" layout-align="center center">
+                        <div ><ng-md-icon icon="expand_less" size="96" md-colors="{fill: 'accent-700'}" aria-label="up" ng-click="changeTemp(true)"></ng-md-icon></div>
+                        <ng-md-icon icon="whatshot" size="175" md-colors="{fill: 'warn'}" aria-label="Heating" ng-show="heatingOn" ng-click="toggleHeating();"></ng-md-icon>
+                        <ng-md-icon  icon="ac_unit" size="175" md-colors="{fill: 'cyan-700'}" aria-label="Defrost" ng-hide="heatingOn" ng-click="toggleHeating();"></ng-md-icon>
+                        <div ><ng-md-icon icon="expand_more" size="96" md-colors="{fill: 'accent-700'}" aria-label="down" ng-click="changeTemp(false)"></ng-md-icon></div>
                     </div>
+                       
                     <div layout="row" layout-align="center center">
                         
-                            <div flex="10"></div>
-                            <div layout="column" layout-align="center center" flex>
-                                <span class="md-accent">Humidity</span>
-                                <span class="md-display-1 padLeft" md-colors="{color: 'Indigo'}">{{humidity}}%</span>
-                            </div>
-                            <div layout="column" layout-align="center center" flex>
-                                <span class="md-accent">Current temp</span>
-                                <span class="md-display-1 padLeft" md-colors="{color: 'warn'}">{{temp}}°</span>
-                            </div>                        
-                            <div layout="column" layout-align="center center" flex>
-                                <span>Desired temp</span>
-                                <span class="md-display-1 padLeft" md-colors="{color: 'accent-700'}">{{desiredTemp}}°</span>
-                            </div>
-                            <div flex="10"></div>
+                        <div flex="10"></div>
+                        <div layout="column" layout-align="center center" flex>
+                            <span class="md-accent">Humidity</span>
+                            <span class="md-display-1" md-colors="{color: 'Indigo-300'}">{{humidity}}%</span>
+                        </div>
+                        <div layout="column" layout-align="center center" flex>
+                            <span class="md-accent">Current temp</span>
+                            <span class="md-display-1" md-colors="{color: 'accent-700'}">{{temp}}°</span>
+                        </div>                        
+                        <div layout="column" layout-align="center center" flex>
+                            <span>Desired temp</span>
+                            <span class="md-display-1" md-colors="{color: 'warn'}">{{desiredTemp}}°</span>
+                        </div>
+                        <div flex="10"></div>
                         
                     </div>
                     <md-card md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch>
@@ -260,6 +251,22 @@
                             </md-card-title-text>
                         </md-card-title>
                     </md-card>
+                    <div layout="row" layout-align="center center">
+                        <div layout="column" layout-align="center center" ng-init="selection = { selectedNode:  null }">
+                            <div class="md-whiteframe-2dp timeBlock md-caption" layout="column" ng-click="toggleTimeBlock(n)" ng-class="{selectedTimeBlock : selectedTimeBlocksArray.indexOf(n) !== -1}" layout-align="center center" ng-repeat="n in [0,1,2,3,4,5,6,7,8,9,10,11]">
+                                <div >
+                                    {{n}}:00
+                                </div>
+                            </div>
+                        </div>
+                        <div layout="column" layout-align="center center" ng-init="selection = { selectedNode:  null }">
+                            <div class="md-whiteframe-2dp timeBlock md-caption" layout="column" ng-click="toggleTimeBlock(n)" ng-class="{selectedTimeBlock : selectedTimeBlocksArray.indexOf(n) !== -1}" layout-align="center center" ng-repeat="n in [12,13,14,15,16,17,18,19,20,21,22,23]">
+                                <div >
+                                    {{n}}:00
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div flex></div>
                 
