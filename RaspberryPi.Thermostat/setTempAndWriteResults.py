@@ -17,7 +17,7 @@ tempObj = {
         'DesiredTemp':desiredTemp,
         'Date': now
     }
-with open('desiredTemp.json', 'w') as outfile:
+with open('/var/www/html/desiredTemp.json', 'w') as outfile:
     json.dump(tempObj, outfile)
 outfile.close() 
         
@@ -72,7 +72,7 @@ if humidity is not None and temperature is not None:
 
         'Date': now
     }
-    with open('climate.json', 'w') as outfile:
+    with open('/var/www/html/climate.json', 'w') as outfile:
         json.dump(climate, outfile)
     outfile.close() 
 else:
