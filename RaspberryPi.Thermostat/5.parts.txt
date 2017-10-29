@@ -1,0 +1,4 @@
+diode 1N4001 
+relay
+resistor 1k to 1.2k
+npn transistor
