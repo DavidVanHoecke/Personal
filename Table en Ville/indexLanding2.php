@@ -1,5 +1,5 @@
-<html lang="en" >
-    <head>
+
+    
 
         <Title>Welcome to Table en Ville - A social dining club experience</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,27 +12,28 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-route.js"></script>
 
         <!-- Angular Material Library -->
         <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
-
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material-icons/0.7.1/angular-material-icons.min.js"></script> 
-
         <script src="https://use.fontawesome.com/ab34c2e899.js"></script>
-
+        
         <!-- Your application bootstrap  -->
         <script type="text/javascript">
             /**
              * You must include the dependency on 'ngMaterial' 
              */
-            var app = angular.module('TeV', ['ngMaterial', 'ngMdIcons']);
+            var app = angular.module('TeV', ['ngMaterial', 'ngMdIcons', 'ngRoute']);
             app.controller('LandingCtrl', ['$scope', '$mdDialog', '$mdMedia', '$mdToast', 'mailService', function ($scope, $mdDialog, $mdMedia, $mdToast, mailService) {
             
             $scope.theme = 'lime';
             
+            $scope.sayHi = "Say hi";
+            
             $scope.triggerLanding = function(){
             dialogShowAdvanced(null, false, "landing-template.html", $scope, $mdMedia, $mdDialog);
-            }
+            };
 
             //$scope.guest = {email: "david.vanhoecke@delair-tech.com", nameFirst: "David", nameLast : "Van Hoecke"};
 
@@ -56,9 +57,9 @@
             msg = null;
             $scope.guest = null;
             showToast("Thank you for participating!", $mdToast);
-            sleep(2000).then(function(){
+            //sleep(2000).then(function(){
             $mdDialog.hide();
-            });
+            //});
             }, function(err){
             alert(err);
             });
@@ -96,12 +97,13 @@
 
                 // This is the absolutely vital part, without this, changes will not cascade down through the DOM.
                 $mdThemingProvider.alwaysWatchTheme(true);
-              })
+              });
     
+    /*
             function sleep(time) {
-            return new Promise((resolve) => setTimeout(resolve, time));
+                return new Promise(function(resolve) => {setTimeout(resolve, time)});
             }
-
+*/
             function dialogShowAdvanced(ev, clickOutsideToClose, template, $scope, $mdMedia, $mdDialog) {
             var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
             $mdDialog.show({
@@ -221,12 +223,12 @@
                 background-size: cover;
             }
         </style>
-    </head>
+    
     <?php 
     if(!isset($_COOKIE["landingPage"])) {
-        echo '<body ng-app="TeV" ng-controller="LandingCtrl" ng-cloak layout-align="center center" data-ng-init="triggerLanding();">';
+        echo "<body ng-app='TeV' ng-controller='LandingCtrl' layout-align='center center' data-ng-init='sayHiMessage = sayHi; triggerLanding();'>";
     } else {
-        echo '<body ng-app="TeV" ng-controller="LandingCtrl" ng-cloak layout-align="center center">';
+        echo '<body ng-app="TeV" ng-controller="LandingCtrl" layout-align="center center">';
     }
     ?>
     <md-content layout="column" class="parallax">
@@ -253,7 +255,7 @@
                     </div>
                 </div>
                 <div layout="row"  layout-align="center center" class="md-padding">
-                    <md-button class="md-raised md-warn md-padding" ng-click="triggerLanding()" layout="row" layout-align="center center">
+                    <md-button class="md-raised md-warn md-padding" ng-click="sayHiMessage = 'Dine with us'; triggerLanding()" layout="row" layout-align="center center">
                         <span flex></span>
                         <ng-md-icon icon="mail" style="fill: white;"></ng-md-icon>
                         <span class="md-title" md-colors="{color: 'primary-50'}">&nbsp;Dine with us</span>
@@ -269,7 +271,7 @@
                 <md-card-title>
                     <md-card-title-text>
                         <div layout="row" layout-align="start center">
-                            <ng-md-icon icon="group" size="48"  md-colors="{fill: 'primary'}" aria-label="Social dining"></ng-md-icon>
+                            <ng-md-icon icon="restaurant" size="48"  md-colors="{fill: 'primary'}" aria-label="Social dining"></ng-md-icon>
                             <span class="md-headline">Social dining</span>
                         </div> 
                     </md-card-title-text>
@@ -285,7 +287,7 @@
                 <md-card-title>
                     <md-card-title-text>
                         <div layout="row" layout-align="start center">
-                            <ng-md-icon icon="account_circle" size="48" md-colors="{fill: 'accent'}" aria-label="The team"></ng-md-icon>
+                            <ng-md-icon icon="group" size="48" md-colors="{fill: 'accent'}" aria-label="The team"></ng-md-icon>
                             <span class="md-headline">The team</span>
                         </div> 
                     </md-card-title-text>
@@ -301,7 +303,7 @@
                 <md-card-title>
                     <md-card-title-text>
                         <div layout="row" layout-align="start center">
-                            <ng-md-icon icon="group" size="48" aria-label="Good food, great people" md-colors="{fill: 'warn'}"></ng-md-icon>
+                            <ng-md-icon icon="local_dining" size="48" aria-label="Good food, great people" md-colors="{fill: 'warn'}"></ng-md-icon>
                             <span class="md-headline">Good food, great people</span>
                         </div> 
                     </md-card-title-text>
@@ -328,7 +330,7 @@
             <br />
             <ng-md-icon icon="restaurant" md-colors="{fill: 'warn'}" ng-hide="true"></ng-md-icon><br />
         
-            <md-button class="md-raised md-warn md-padding" ng-click="triggerLanding()" layout="row" layout-align="center center">
+            <md-button class="md-raised md-warn md-padding" ng-click="sayHiMessage = 'Join us'; triggerLanding()" layout="row" layout-align="center center">
                 <span flex></span>
                 <ng-md-icon icon="mail" style="fill: white;"></ng-md-icon>
                 <span class="md-title" md-colors="{color: 'primary-50'}">&nbsp;join us</span>
@@ -353,12 +355,12 @@
     </div>
 
     <?php echo '<script type="text/ng-template" id="landing-template.html">' ?>
-    <md-dialog aria-label="landing" ng-controller="LandingCtrl" flex="40" flex-xs="85" ng-cloak style="background: url(http://www.tableenville.com/themes/tenv_default/img/cuis5.jpg) no-repeat; background-size:  cover;">
+    <md-dialog aria-label="landing" ng-controller="LandingCtrl" flex="40" flex-xs="85" style="background: url(http://www.tableenville.com/themes/tenv_default/img/cuis5.jpg) no-repeat; background-size:  cover;">
         <form name="LandingForm" id="form" layout="column">
             
             <div layout="row" layout-xs="column" layout-align="center center" class="md-padding"> 
                 <div flex-gt-xs="50" layout="column"  md-colors="{fill: 'accent-800'}" layout-align="center start">
-                    <h1  md-colors="{color: 'primary'}" class="md-display-3" >Say hi!</h1>
+                    <h1  md-colors="{color: 'primary'}" class="md-display-3" >{{sayHiMessage}}</h1>
                 </div>
                 <div flex-gt-xs="50" style="background-color: rgba(255,255,255,0.8); border-radius: 10px;">
                     <div ng-show="mailSent" class='infoContainer'>Details received, thank you!</div>
@@ -400,4 +402,4 @@
     <?php echo '</script>' ?>
         </md-content>
 </body>
-</html>
+

@@ -1,5 +1,5 @@
-<html lang="en" >
-    <head>
+
+    
 
         <Title>Welcome to Table en Ville - A social dining club experience</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,27 +12,28 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-route.js"></script>
 
         <!-- Angular Material Library -->
         <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
-
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material-icons/0.7.1/angular-material-icons.min.js"></script> 
-
         <script src="https://use.fontawesome.com/ab34c2e899.js"></script>
-
+        
         <!-- Your application bootstrap  -->
         <script type="text/javascript">
             /**
              * You must include the dependency on 'ngMaterial' 
              */
-            var app = angular.module('TeV', ['ngMaterial', 'ngMdIcons']);
+            var app = angular.module('TeV', ['ngMaterial', 'ngMdIcons', 'ngRoute']);
             app.controller('LandingCtrl', ['$scope', '$mdDialog', '$mdMedia', '$mdToast', 'mailService', function ($scope, $mdDialog, $mdMedia, $mdToast, mailService) {
             
             $scope.theme = 'lime';
             
+            $scope.sayHi = "Say hi";
+            
             $scope.triggerLanding = function(){
             dialogShowAdvanced(null, false, "landing-template.html", $scope, $mdMedia, $mdDialog);
-            }
+            };
 
             //$scope.guest = {email: "david.vanhoecke@delair-tech.com", nameFirst: "David", nameLast : "Van Hoecke"};
 
@@ -56,9 +57,9 @@
             msg = null;
             $scope.guest = null;
             showToast("Thank you for participating!", $mdToast);
-            sleep(2000).then(function(){
+            //sleep(2000).then(function(){
             $mdDialog.hide();
-            });
+            //});
             }, function(err){
             alert(err);
             });
@@ -96,12 +97,13 @@
 
                 // This is the absolutely vital part, without this, changes will not cascade down through the DOM.
                 $mdThemingProvider.alwaysWatchTheme(true);
-              })
+              });
     
+    /*
             function sleep(time) {
-            return new Promise((resolve) => setTimeout(resolve, time));
+                return new Promise(function(resolve) => {setTimeout(resolve, time)});
             }
-
+*/
             function dialogShowAdvanced(ev, clickOutsideToClose, template, $scope, $mdMedia, $mdDialog) {
             var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
             $mdDialog.show({
@@ -220,13 +222,14 @@
                 background-repeat: no-repeat;
                 background-size: cover;
             }
+            
         </style>
-    </head>
+    
     <?php 
     if(!isset($_COOKIE["landingPage"])) {
-        echo '<body ng-app="TeV" ng-controller="LandingCtrl" ng-cloak layout-align="center center" data-ng-init="triggerLanding();">';
+        echo "<body ng-app='TeV' ng-controller='LandingCtrl' layout-align='center center' ng-cloak data-ng-init='sayHiMessage = sayHi; triggerLanding();'>";
     } else {
-        echo '<body ng-app="TeV" ng-controller="LandingCtrl" ng-cloak layout-align="center center">';
+        echo '<body ng-app="TeV" ng-controller="LandingCtrl" layout-align="center center" ng-cloak>';
     }
     ?>
     <md-content layout="column" class="parallax">
@@ -239,7 +242,7 @@
         <div layout="row" layout-align="center center" class="md-padding gradientBg">
             <div flex layout="column" layout-align="center center">
                 <div hide-xs layout="row" layout-align="center center" class="md-display-1" style="color: #666; font-style: italic; text-align: right;">
-                    <br />The fondest memories are made around the table<br />
+                    <br />"The fondest memories are made around the table."<br />
                     - the TeV team<br/><br/>
                 </div>
                 <div hide-gt-xs layout="row" layout-align="center center" class="md-title" style="color: #666; font-style: italic; text-align: right;">
@@ -247,16 +250,15 @@
                     - the TeV team<br/><br/>
                 </div>
                 <div layout="row"  layout-align="center center">
-                    <div style="color: #777;" flex-gt-xs="50">
-                        We want to bring as many people as possible together at the dining table to enjoy the taste of life. Because we look at the dining table as the original social network to meet new people based on interests and passions.
-                        Table en Ville brings food with a story. Our online platform connects hosts and guests from diverse backgrounds to share good times. People who love to share their stories of living with others at the dining table
+                    <div style="color: #777; text-align: center;" flex-gt-xs="60" class="md-headline">
+                        Table en Ville brings food with a story. We look at the dining table as the original social network to meet new people based on interests and passions.                   
                     </div>
                 </div>
                 <div layout="row"  layout-align="center center" class="md-padding">
-                    <md-button class="md-raised md-warn md-padding" ng-click="triggerLanding()" layout="row" layout-align="center center">
+                    <md-button class="md-raised md-warn md-padding" ng-click="sayHiMessage = 'Dine with us'; triggerLanding()" layout="row" layout-align="center center">
                         <span flex></span>
                         <ng-md-icon icon="mail" style="fill: white;"></ng-md-icon>
-                        <span class="md-title" md-colors="{color: 'primary-50'}">&nbsp;Dine with us</span>
+                        <span class="md-headline" md-colors="{color: 'primary-50'}">&nbsp;Share a table</span>
                         <span flex></span>
                     </md-button>
                     <md-button class="md-raised md-accent" ng-click="triggerLanding()" ng-hide="true">Learn more</md-button>
@@ -269,30 +271,14 @@
                 <md-card-title>
                     <md-card-title-text>
                         <div layout="row" layout-align="start center">
-                            <ng-md-icon icon="group" size="48"  md-colors="{fill: 'primary'}" aria-label="Social dining"></ng-md-icon>
-                            <span class="md-headline">Social dining</span>
+                            <ng-md-icon icon="restaurant" size="48"  md-colors="{fill: 'primary'}" aria-label="Social dining"></ng-md-icon>
+                            <span class="md-display-1">Social dining</span>
                         </div> 
                     </md-card-title-text>
                 </md-card-title>
                 <md-card-content>
-                    <p>
+                    <p  class="md-headline">
                         At Table en Ville we believe that the fondest memories are made around the table. We want to bring as many people as possible together at the dining table to enjoy the taste of life. 
-                    </p>
-                </md-card-content>
-            </md-card>
-            <md-card flex-gt-xs>
-                <img ng-src="http://www.tableenville.com/themes/tenv_default/img/cuis6.jpg" class="md-card-image" alt="Social dining">
-                <md-card-title>
-                    <md-card-title-text>
-                        <div layout="row" layout-align="start center">
-                            <ng-md-icon icon="account_circle" size="48" md-colors="{fill: 'accent'}" aria-label="The team"></ng-md-icon>
-                            <span class="md-headline">The team</span>
-                        </div> 
-                    </md-card-title-text>
-                </md-card-title>
-                <md-card-content layout-align="center center">
-                    <p>
-                        We are a team of 5 friends (Belgium, Germany, The Netherlands). Passionate about sharing ideas and make things happen. We look at the dining table as the original social network to meet new people based on interests and passions.
                     </p>
                 </md-card-content>
             </md-card>
@@ -301,14 +287,30 @@
                 <md-card-title>
                     <md-card-title-text>
                         <div layout="row" layout-align="start center">
-                            <ng-md-icon icon="group" size="48" aria-label="Good food, great people" md-colors="{fill: 'warn'}"></ng-md-icon>
-                            <span class="md-headline">Good food, great people</span>
+                            <ng-md-icon icon="local_dining" size="48" aria-label="Good food, great people" md-colors="{fill: 'warn'}"></ng-md-icon>
+                            <span class="md-display-1">Good food, great people</span>
                         </div> 
                     </md-card-title-text>
                 </md-card-title>
                 <md-card-content>
-                    <p>
+                    <p class="md-headline">
                         Table en Ville brings food with a story. Our online platform connects hosts and guests from diverse backgrounds to share good times. People who love to share their stories of living with others at the dining table.
+                    </p>
+                </md-card-content>
+            </md-card>
+            <md-card flex-gt-xs>
+                <img ng-src="http://www.tableenville.com/themes/tenv_default/img/cuis6.jpg" class="md-card-image" alt="Social dining">
+                <md-card-title>
+                    <md-card-title-text>
+                        <div layout="row" layout-align="start center">
+                            <ng-md-icon icon="group" size="48" md-colors="{fill: 'accent'}" aria-label="The team"></ng-md-icon>
+                            <span class="md-display-1">The team</span>
+                        </div> 
+                    </md-card-title-text>
+                </md-card-title>
+                <md-card-content layout-align="center center">
+                    <p class="md-headline">
+                        We are a team of 5 friends (Belgium, Germany, The Netherlands). Passionate about sharing ideas and make things happen. We look at the dining table as the original social network to meet new people based on interests and passions.
                     </p>
                 </md-card-content>
             </md-card>
@@ -320,25 +322,24 @@
             <ng-md-icon icon="restaurant" md-colors="{fill: 'accent'}"></ng-md-icon>
             <h1 style="color: #7c7c7c;" class="md-padding">Join us for our launch event</h1>
             <div layout="row" layout-align="center center">
-                <div flex-gt-xs="50"style="color: #7c7c7c; text-align: center;" class="md-padding">Table en Ville offers expats an unforgettable dining experience at the host’s table.
-                        We connect expats living in Brussels to share a meal in great company at the host’s home. 
-                        People like you who love to share their stories of living and passion for food at the dining table
+                <div flex-gt-xs="50"style="color: #7c7c7c; text-align: center;" class="md-padding md-headline">
+                        We connect expats living in Brussels to share a meal in great company at the host’s home. People like you who love to share their stories of living and passion for food at the dining table
                 </div>
             </div>
             <br />
             <ng-md-icon icon="restaurant" md-colors="{fill: 'warn'}" ng-hide="true"></ng-md-icon><br />
         
-            <md-button class="md-raised md-warn md-padding" ng-click="triggerLanding()" layout="row" layout-align="center center">
+            <md-button class="md-raised md-warn md-padding" ng-click="sayHiMessage = 'Join us'; triggerLanding()" layout="row" layout-align="center center">
                 <span flex></span>
                 <ng-md-icon icon="mail" style="fill: white;"></ng-md-icon>
-                <span class="md-title" md-colors="{color: 'primary-50'}">&nbsp;join us</span>
+                <span class="md-headline" md-colors="{color: 'primary-50'}">&nbsp;join us</span>
                 <span flex></span>
             </md-button>
             <md-button class="md-raised md-accent" ng-click="triggerLanding()" ng-hide="true">Learn more</md-button>
         
         
         <div layout="row" layout-align="center center">
-            <span class="md-primary" style="font-style: italic; text-align: center;"><br /> * Don't worry, we hate spam too. We won't share your details with anyone.<br><br></span>
+            <span class="md-primary" style="font-style: italic; text-align: center;color: #7c7c7c;"><br /> * Don't worry, we hate spam too. We won't share your details with anyone.<br><br></span>
         </div>
 
         <div layout="row" id="footer" hide-xs layout-align="center center"><a href="mailto:contact@tableenville.com" class="mail">&copy; 2017 Table en Ville&nbsp;|&nbsp;all rights reserved&nbsp;|&nbsp;contact@tableenville.com</a>&nbsp;|&nbsp;<i class="fa fa-instagram" aria-hidden="true"></i>&nbsp;<i class="fa fa-facebook" aria-hidden="true"></i>&nbsp;<i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;<br /><br /></div>
@@ -353,12 +354,12 @@
     </div>
 
     <?php echo '<script type="text/ng-template" id="landing-template.html">' ?>
-    <md-dialog aria-label="landing" ng-controller="LandingCtrl" flex="40" flex-xs="85" ng-cloak style="background: url(http://www.tableenville.com/themes/tenv_default/img/cuis5.jpg) no-repeat; background-size:  cover;">
+    <md-dialog aria-label="landing" ng-controller="LandingCtrl" flex="40" flex-xs="85" style="background: url(http://www.tableenville.com/themes/tenv_default/img/cuis5.jpg) no-repeat; background-size:  cover;">
         <form name="LandingForm" id="form" layout="column">
             
             <div layout="row" layout-xs="column" layout-align="center center" class="md-padding"> 
                 <div flex-gt-xs="50" layout="column"  md-colors="{fill: 'accent-800'}" layout-align="center start">
-                    <h1  md-colors="{color: 'primary'}" class="md-display-3" >Say hi!</h1>
+                    <h1  md-colors="{color: 'primary'}" class="md-display-3" >{{sayHiMessage}}</h1>
                 </div>
                 <div flex-gt-xs="50" style="background-color: rgba(255,255,255,0.8); border-radius: 10px;">
                     <div ng-show="mailSent" class='infoContainer'>Details received, thank you!</div>
@@ -400,4 +401,4 @@
     <?php echo '</script>' ?>
         </md-content>
 </body>
-</html>
+
