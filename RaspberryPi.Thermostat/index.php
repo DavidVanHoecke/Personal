@@ -1,10 +1,8 @@
+<?php
+     if(isset($_GET["token"]) && $_GET["token"]=="2BC25A97-EF19-7FF5-F536-3D0EF00012D4"){
+         ?>
 <html lang="en" >
     <head>
-        <?php
-        $desiredTemp = 28;
-        $cmd = "sudo python /usr/src/Thermostat/setTempAndWriteResults.py " . $desiredTemp;
-        exec($cmd);
-        ?>
         <Title>Set the world on fire!</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="Cache-control" content="no-cache">
@@ -345,3 +343,16 @@
     </md-content>
 </body>
 </html>
+<?php
+     }
+     else{
+?>
+<html>
+<head></head>
+<body>
+    You have no access to this page.
+</body>
+</html>
+<?php
+     }
+?>
