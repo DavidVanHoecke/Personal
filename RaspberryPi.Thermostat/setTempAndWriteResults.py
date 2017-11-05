@@ -27,22 +27,13 @@ outfile.close()
 sensor = Adafruit_DHT.DHT11
 dht11Pin = 25
 relayPin = 23
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(relayPin,GPIO.OUT)
 
 # Try to grab a sensor reading.  Use the read_retry method which will retry up
 # to 15 times to get a sensor reading (waiting 2 seconds between each retry).
 humidity, temperature = Adafruit_DHT.read_retry(sensor, dht11Pin)
-
-
-##GPIO.setmode(GPIO.BCM)
-##GPIO.setwarnings(False)
-##GPIO.setup(relayPin,GPIO.OUT)
-
-##print "relay on"
-##GPIO.output(relayPin,GPIO.HIGH)
-
-
-##print "relay off"
-##GPIO.output(relayPin,GPIO.LOW)
 
 # Note that sometimes you won't get a reading and
 # the results will be null (because Linux can't
@@ -51,15 +42,14 @@ humidity, temperature = Adafruit_DHT.read_retry(sensor, dht11Pin)
 if humidity is not None and temperature is not None:
     # turn heating on and off
     if temperature + 1 < desiredTemp:
-        ##GPIO.output(relayPin,GPIO.HIGH)
+        GPIO.output(relayPin,GPIO.HIGH)
         print('Turning on heating!')
 
     if temperature - 1 > desiredTemp:
-        ##GPIO.output(relayPin,GPIO.LOW)
+        GPIO.output(relayPin,GPIO.LOW)
         print('Turning off heating!')
 
     if temperature == desiredTemp:
-        ##GPIO.output(relayPin,GPIO.LOW)
         print('No change in heating status.')
 
     # write climate readings to file
