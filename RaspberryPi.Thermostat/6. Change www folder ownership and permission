@@ -1,0 +1,7 @@
+pi@raspberrypi:~ $ chown www-data:www-data /var/www
+chown: changing ownership of '/var/www': Operation not permitted
+pi@raspberrypi:~ $ sudo chown www-data:www-data /var/www
+pi@raspberrypi:~ $ sudo chmod 775 /var/www
+pi@raspberrypi:~ $ sudo chmod 775 /var/www/html
+pi@raspberrypi:~ $ sudo chown -R www-data:www-data /var/www
+pi@raspberrypi:~ $ sudo chown -R www-data:www-data /var/www/html
