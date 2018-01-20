@@ -2,7 +2,7 @@
 sudo apt-get update
 sudo apt-get upgrade
 
-- install the apache2 package by typing the following command in to the Terminal:
+- install the apache2 package 
 sudo apt-get install apache2 -y
 
 - install php
