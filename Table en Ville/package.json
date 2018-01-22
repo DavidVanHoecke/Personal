@@ -1,8 +1,0 @@
-{
-    "name": "Table_en_Ville",
-    "version": "1.0.0",
-    "keywords": ["util", "functional", "server", "client", "browser"],
-    "author": "dvh",
-    "contributors": [],
-    "dependencies": {"angularjs                 ||":"0.0.1    ||","angular-material          ||||||||||||||||":"",}
-}
