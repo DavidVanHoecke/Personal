@@ -1,0 +1,19 @@
+- Execute "sudo apt install python-gpiozero" to install gpiozero library
+- Upload OffButton.py to home dir ("/home/pi")
+- run OffButton.py from putty to see if it works. If it works you should see no errors but the putty session should become unusable untill you do "ctrl+c" to kill OffButton.py
+- Add OffButton.py to rc.local:
+	- Edit. rc.local with nano: "sudo nano /etc/rc.local"
+	- add line "sudo python /home/pi/OffButton.py" before "Exit 0" 
+- reboot with "sudo shutdown -r now"
+- check if process is running after reboot: "pgrep -af python", should be listed as "OffButton.py"
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ DO NOT INSTALL AND USE BUTTON BEFORE YOU ARE SURE OffButton.py IS RUNNING PROPERLY
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+- install button on pin nr 39 (GND) and 40 (21 BCM). These pins are on the end of the pin header
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ DO NOT INSTALL AND USE BUTTON BEFORE YOU ARE SURE OffButton.py IS RUNNING PROPERLY
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
