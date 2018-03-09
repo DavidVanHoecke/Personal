@@ -1,0 +1,15 @@
+Outer&Height :  47.75*20(mm)
+
+mounting hole's site(quantities-diameter) up :   15mm(4-M2.5)
+
+mounting hole's site(quantities-diameter) dowm :  25mm(4-M3)
+
+MOTOR'S Torque :  0.8KG/4S
+
+(Wire length) including JR plug : 35cm
+
+(weight)/g : 70g
+
+(pole) : 12N14P
+
+(resistance)/ohm : 15.3
