@@ -1,0 +1,30 @@
+Install samba for network access to the Pi's drive(s)
+- sudo apt-get install samba samba-common-bin
+ 
+Open samba configuration file
+- sudo nano /etc/samba/smb.conf
+
+Add to end of samba configuration (/etc/samba/smb.conf):
+[PiDrive]
+   comment = SD on Pi
+   path = /home/pi/PiDrive
+   valid users = @users
+   force group = users
+   create mask = 0660
+   directory mask = 0771
+   read only = no
+   
+Restart Samba
+- sudo /etc/init.d/samba restart
+
+At this point we need to add in a user that can access the Pi’s samba shares. We’re going to make an account with the username PiDriveUser and the password ppp. To do so type the following commands:
+- sudo useradd PiDriveUser -m -G users
+- sudo passwd PiDriveUser
+
+You’ll be prompted to type in the password twice to confirm. 
+- pass: ppp
+
+After confirming the password, it’s time to add PiDriveUser as a legitimate Samba user. Enter the following command:
+- sudo smbpasswd -a PiDriveUser
+
+Read html file for the rest
