@@ -12,7 +12,7 @@
  DO NOT INSTALL AND USE BUTTON BEFORE YOU ARE SURE OffButton.py IS RUNNING PROPERLY
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-- install button on pin nr 39 (GND) and 40 (21 BCM). These pins are on the end of the pin header
+- install button on pin nr# (GND) and 5 (GPIO 3: BCM / SCL). GPIO 3 at pin nr 5 is also used to turn the device on so it's a good choice for this.
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  DO NOT INSTALL AND USE BUTTON BEFORE YOU ARE SURE OffButton.py IS RUNNING PROPERLY
