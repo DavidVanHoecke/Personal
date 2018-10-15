@@ -1,0 +1,128 @@
+Install raspbian
+""""""""""""""""
+- flash micro sd with raspbian
+- in windows explorer add files named "ssh" (no extension) and "wpa_supplicant.conf" to root of sd after flash
+- wpa_supplicant.conf contents:
+		ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+		update_config=1
+		country=BE
+
+		network={
+			ssid="NaamVanNetwerk"
+			psk="paswoord"
+			key_mgmt=WPA-PSK
+		}
+- put in Raspberry and boot it
+- check if ip is assigned for Raspberry in router or ISP admin pages, copy ip
+- connect over ssh, eg. with Putty
+- change password to "XXXXXXXX" (the usual)
+sudo passwd
+->enter current password
+->enter new password 2x
+
+Update Raspbian
+"""""""""""""""
+sudo apt-get update
+sudo apt-get upgrade
+
+Node
+""""
+Type this in your terminal on raspberry pi to detect the version that you need:
+uname -m
+
+If the response starts with armv6 than that's the version that you will need. For example for raspberry pi zero W you will need ARMv6
+wget https://nodejs.org/dist/v8.9.0/node-v8.9.0-linux-armv6l.tar.gz
+
+Using tar that is already installed with the system on your raspberry pi just type this (make sure you change the filename with the file that you have)
+tar -xzf node-v8.9.0-linux-armv6l.tar.gz
+
+Copy Node to /usr/local
+cd node-v6.11.1-linux-armv6l/
+sudo cp -R * /usr/local/
+
+
+Check If Everything Is Installed Ok
+Check if node and npm are installed correctly. This lines should print the version of node and npm installed.
+
+node -v
+npm -v
+
+Now you have node.js installed on your Raspberry Pi and working so you can build something using node
+
+Install gpio and socket
+"""""""""""""""""""""""
+sudo apt install python-gpiozero
+npm install rpi-gpio
+npm install socket.io --save
+
+Off button
+""""""""""
+- Upload OffButton.py to home dir ("/home/pi")
+- run OffButton.py from putty to see if it works. If it works you should see no errors but the putty session should become unusable untill you do "ctrl+c" to kill OffButton.py
+- Add OffButton.py to rc.local:
+	- Edit. rc.local with nano: "sudo nano /etc/rc.local"
+	- add line "sudo python /home/pi/OffButton.py" before "Exit 0" 
+- reboot with "sudo shutdown -r now"
+- check if process is running after reboot: "pgrep -af python", should be listed as "OffButton.py"
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ DO NOT INSTALL AND USE BUTTON BEFORE YOU ARE SURE OffButton.py IS RUNNING PROPERLY
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+- install button on pin nr# (GND) and 5 (GPIO 3: BCM / SCL). GPIO 3 at pin nr 5 is also used to turn the device on so it's a good choice for this.
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ DO NOT INSTALL AND USE BUTTON BEFORE YOU ARE SURE OffButton.py IS RUNNING PROPERLY
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+offbutton.py:
+"""""""""""""
+#!/usr/bin/env python3
+
+from gpiozero import Button
+
+from signal import pause
+
+import os, sys
+
+
+
+offGPIO = int(sys.argv[1]) if len(sys.argv) >= 2 else 3
+
+holdTime = int(sys.argv[2]) if len(sys.argv) >= 3 else 4
+
+
+
+# the function called to shut down the RPI
+
+def shutdown():
+    
+	os.system("sudo shutdown -P now")
+
+
+
+btn = Button(offGPIO, hold_time=holdTime)
+
+btn.when_held = shutdown
+
+pause()    # handle the button presses in the background
+
+
+DHT Temp Sensor package
+""""""""""""""""""
+wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.46.tar.gz
+tar zxvf bcm2835-1.46.tar.gz
+cd bcm2835-1.46
+./configure
+make
+sudo make check
+sudo make install
+sudo npm install --unsafe-perm -g node-dht-sensor
+npm install node-dht-sensor
+
+Check running processes
+"""""""""""""""""""""""
+ps -ef | grep python
+ps -ef | grep node
+

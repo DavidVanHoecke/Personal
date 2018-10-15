@@ -1,0 +1,180 @@
+<html lang="en" >
+    <head>
+        <Title>Thermostaat </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="Cache-control" content="no-cache">
+        
+        <!-- Angular Material style sheet -->
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
+
+        <!-- Angular Material requires Angular.js Libraries -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+
+        <!-- Angular Material Library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material-icons/0.7.1/angular-material-icons.min.js"></script> 
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script> <!-- include socket.io client side script -->
+                
+                <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js" integrity="sha384-kW+oWsYx3YpxvjtZjFXqazFpA7UP/MbiY4jvs+RWZo2+N94PFZ36T6TFkc9O3qoB"
+            crossorigin="anonymous"></script>
+
+
+		
+		<!-- Your application bootstrap  --> 
+        <script type="text/javascript">
+            var task_nr = 0;
+			
+			
+            var app = angular.module('ThermoApp', ['ngMaterial', 'ngMdIcons', 'ngMessages']);
+            app.controller('ThermostatController', ['$scope', '$mdDialog', '$mdMedia', '$timeout','$mdToast', 'socket', function ($scope, $mdDialog, $mdMedia, $timeout, $mdToast, socket) {
+				$scope.init = function(){
+					socket.emit('cmd', 'start');
+					$scope.btnSize = "150";
+                                        $scope.temp = "0";
+                                        $scope.humidity = "0";
+                                        $scope.off = "off";
+                                        $scope.on = "on";
+                                        $scope.lastUpdate = "";
+                                        doPolling();
+                                        getDate($scope.theDate);
+                                        //alert("hier");
+				};	
+                             
+                                socket.on('status', function(data){
+                                    $mdToast.show(
+                                      $mdToast.simple()
+                                        .textContent(data)
+                                        .position("bottom")
+                                        .hideDelay(3000)
+                                    );
+				});
+                                var doPolling = function() {
+                                    socket.emit('cmd', 'start');
+                                    $timeout(doPolling, 30000);
+                                };
+				
+				socket.on('conditions', function(data){
+                                    $scope.temp = data.t;
+                                    $scope.humidity = data.h;
+                                    $scope.lastUpdate = data.d;
+				});
+				
+                                $scope.sendCmd = function(cmd){
+                                    socket.emit("cmd", cmd);
+                                };
+                                
+                                var getDate = function(){
+                                    var dat = new Date();
+                                    $scope.theDate = dat.toLocaleDateString() + " " + dat.toLocaleTimeString();
+                                    $timeout(getDate, 1000);
+                                };
+                                
+			}]);
+			
+			app.config(function ($mdThemingProvider) {
+				var customGreyMap = $mdThemingProvider.extendPalette('grey', {
+					'contrastDefaultColor': 'light',
+					'contrastDarkColors': ['200'],
+					'200': 'FF9800'
+				});
+				$mdThemingProvider.definePalette('customGreyMap', customGreyMap);
+				$mdThemingProvider.theme('default')
+				  .primaryPalette('customGreyMap', {
+					  'default': '800',
+					  'hue-1': '200'
+				  })
+				  .accentPalette('orange');
+				$mdThemingProvider.theme('input', 'default')
+					  .primaryPalette('grey');
+			});
+
+			app.factory('socket', function ($rootScope) {
+				var socket = io.connect();
+				return {
+					on: function (eventName, callback) {
+					  socket.on(eventName, function () {  
+						var args = arguments;
+						$rootScope.$apply(function () {
+						  callback.apply(socket, args);
+						});
+					  });
+					},
+									
+					emit: function (eventName, data, callback) {
+					  socket.emit(eventName, data, function () {
+						var args = arguments;
+						$rootScope.$apply(function () {
+						  if (callback) {
+							callback.apply(socket, args);
+						  }
+						});
+					  })
+					}
+				};
+			});
+                        
+                        
+                        
+            
+		
+        </script>
+        <style>
+            
+        </style>
+    </head>
+    <body ng-app="ThermoApp" layout="column" ng-cloak>
+	<div ng-controller="ThermostatController" data-ng-init="init()">
+	<md-content layout="column">
+		<md-toolbar class="md-accent">
+			<div class="md-toolbar-tools">
+				<h2 >{{theDate}}</h2>
+			</div>
+		</md-toolbar>
+		<div layout="row">
+			<div flex></div>
+			<md-card flex="80" class="md-padding" layout="row" layout-align="center center">
+				
+				<h1 style="color: orange;"><md-icon md-font-set="fa fa-fw fa-thermometer-three-quarters"  class="md-toggle-icon"></md-icon>{{temp}}C</h1>
+                                <div flex="10"></div>
+				<h1 style="color: blue;"><md-icon md-font-set="fa fa-fw fa-tint"  class="md-toggle-icon"></md-icon>{{humidity}}%</h1>
+				
+			</md-card>
+			<div flex></div>
+		</div>
+		<div layout="row">
+			<div flex></div>
+			<md-card flex="80" class="md-padding" layout="row" layout-align="center center">
+				
+				<div layout="row" layout-align="center center">
+					<div flex></div>
+					<md-button class="md-raised md-primary" aria-label="OFF" ng-click="sendCmd(off);" style="width:{{btnSize}}px; height: {{btnSize}}px; background-color: lightblue;">
+						<md-icon md-font-set="fa fa-fw fa-4x fa-star-of-life"  class="md-toggle-icon"></md-icon>
+					</md-button>
+					<div flex></div>
+					<md-button class="md-raised md-primary" aria-label="ON" ng-click="sendCmd(on);" style="width:{{btnSize}}px; height: {{btnSize}}px; background-color: orange;">
+						<md-icon md-font-set="fa fa-fw fa-4x fa-fire"  class="md-toggle-icon"></md-icon>
+					</md-button>
+					<div flex></div>
+				</div>
+				
+			</md-card>
+			<div flex></div>
+		</div>
+                <div layout="row">
+			<div flex></div>
+			<md-card flex="80" class="md-padding" layout="row" layout-align="center center">
+                            Last update (utc): {{lastUpdate}}
+			</md-card>
+			<div flex></div>
+		</div>        
+		
+	</md-content>
+	</div>
+    </body>
+</html>
