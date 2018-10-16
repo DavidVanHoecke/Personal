@@ -17,8 +17,8 @@ Install raspbian
 - connect over ssh, eg. with Putty
 - change password to "XXXXXXXX" (the usual)
 sudo passwd
-->enter current password
-->enter new password 2x
+- enter current password
+- enter new password 2x
 
 Update Raspbian
 """""""""""""""
@@ -27,27 +27,24 @@ sudo apt-get upgrade
 
 Node
 """"
-Type this in your terminal on raspberry pi to detect the version that you need:
+- Type this in your terminal on raspberry pi to detect the version that you need:
 uname -m
 
-If the response starts with armv6 than that's the version that you will need. For example for raspberry pi zero W you will need ARMv6
+- If the response starts with armv6 than that's the version that you will need. For example for raspberry pi zero W you will need ARMv6
 wget https://nodejs.org/dist/v8.9.0/node-v8.9.0-linux-armv6l.tar.gz
 
-Using tar that is already installed with the system on your raspberry pi just type this (make sure you change the filename with the file that you have)
+- Using tar that is already installed with the system on your raspberry pi just type this (make sure you change the filename with the file that you have)
 tar -xzf node-v8.9.0-linux-armv6l.tar.gz
 
-Copy Node to /usr/local
+- Copy Node to /usr/local
 cd node-v6.11.1-linux-armv6l/
 sudo cp -R * /usr/local/
 
-
-Check If Everything Is Installed Ok
-Check if node and npm are installed correctly. This lines should print the version of node and npm installed.
-
+- Check if node and npm are installed correctly. These lines should print the version of node and npm installed.
+- node
 node -v
+- npm
 npm -v
-
-Now you have node.js installed on your Raspberry Pi and working so you can build something using node
 
 Install gpio and socket
 """""""""""""""""""""""
