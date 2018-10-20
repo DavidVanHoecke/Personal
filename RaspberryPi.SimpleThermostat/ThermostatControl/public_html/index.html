@@ -41,19 +41,23 @@
                                         $scope.off = "off";
                                         $scope.on = "on";
                                         $scope.lastUpdate = "";
-                                        doPolling();
                                         getDate($scope.theDate);
                                         //alert("hier");
 				};	
                              
                                 socket.on('status', function(data){
+                                    showToast(data);
+				});
+                                
+                                var showToast = function(msg) {
                                     $mdToast.show(
                                       $mdToast.simple()
-                                        .textContent(data)
+                                        .textContent(msg)
                                         .position("bottom")
                                         .hideDelay(3000)
                                     );
-				});
+                                }
+                                
                                 var doPolling = function() {
                                     socket.emit('cmd', 'start');
                                     $timeout(doPolling, 30000);
@@ -63,9 +67,11 @@
                                     $scope.temp = data.t;
                                     $scope.humidity = data.h;
                                     $scope.lastUpdate = data.d;
+                                    $scope.heaterState = data.s ? $scope.on: $scope.off;
 				});
 				
                                 $scope.sendCmd = function(cmd){
+                                    showToast("Sent command to turn heater " + cmd);
                                     socket.emit("cmd", cmd);
                                 };
                                 
@@ -136,6 +142,13 @@
 				<h2 >{{theDate}}</h2>
 			</div>
 		</md-toolbar>
+                <div layout="row">
+			<div flex></div>
+			<md-card flex="80" class="md-padding" layout="row" layout-align="center center">
+                            Last update: {{lastUpdate}}
+			</md-card>
+			<div flex></div>
+		</div>   
 		<div layout="row">
 			<div flex></div>
 			<md-card flex="80" class="md-padding" layout="row" layout-align="center center">
@@ -169,11 +182,14 @@
                 <div layout="row">
 			<div flex></div>
 			<md-card flex="80" class="md-padding" layout="row" layout-align="center center">
-                            Last update (utc): {{lastUpdate}}
+                            <h1>
+                                Heater state: 
+                                <span  ng-show="heaterState == on"><md-icon md-font-set="fa fa-fw fa-fire"  class="md-toggle-icon" style="color: orange;" ></md-icon></span>
+                                <span  ng-show="heaterState == off"><md-icon md-font-set="fa fa-fw fa-star-of-life"  class="md-toggle-icon"  style="color: lightblue;"></md-icon></span>
+                            </h1>
 			</md-card>
 			<div flex></div>
-		</div>        
-		
+		</div>   
 	</md-content>
 	</div>
     </body>
