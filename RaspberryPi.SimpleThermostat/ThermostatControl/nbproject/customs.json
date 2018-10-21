@@ -1,0 +1,17 @@
+{
+    "elements": {
+        "md-progress-linear": {},
+        "md-toolbar": {}
+    },
+    "attributes": {
+        "layout": {
+            "context": "div"
+        },
+        "flex": {
+            "context": "div"
+        },
+        "md-colors": {
+            "context": "span"
+        }
+    }
+}

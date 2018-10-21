@@ -157,23 +157,28 @@
             
             
             <div class="md-padding" layout="row" layout-align="center center">
+                
                 <div flex></div>
+                
                 <div flex="30" layout="column" layout-align="center end">
                     <span class="md-display-1" md-colors="{color: 'accent'}">{{heaterState}}</span>
                     <span md-colors="{color: 'grey-400'}">state</span>
                 </div>
+                
                 <md-button class="md-flat md-primary" aria-label="OFF" ng-show="heaterState == off" ng-click="sendCmd(on);" style="width:{{btnSize}}px; height: {{btnSize}}px;" layout="column" layout-align="center center">
-                        <md-icon md-font-set="fa fa-fw fa-6x fa-toggle-on"  color="lightgray" class="md-toggle-icon fa-rotate-180"></md-icon>
+                        <md-icon md-font-set="fa fa-fw fa-8x fa-toggle-on"  color="lightgray" class="md-toggle-icon fa-rotate-180"></md-icon>
                 </md-button>
                 <md-button class="md-flat md-primary" aria-label="ON" ng-show="heaterState == on" ng-click="sendCmd(off);" style="width:{{btnSize}}px; height: {{btnSize}}px;" layout="column" layout-align="center center">
-                        <md-icon md-font-set="fa fa-fw fa-6x fa-toggle-on" color="darkorange" class="md-toggle-icon"></md-icon>
+                        <md-icon md-font-set="fa fa-fw fa-8x fa-toggle-on" color="darkorange" class="md-toggle-icon"></md-icon>
                 </md-button>
-                <div flex="30" layout="column" layout-align="center start">
-                    <span style="height: {{tempe = 15;tempe}}px;"></span>
-                    <md-progress-linear md-mode="determinate" class="md-display-1 md-accent" value="{{((lastPollTime / 30) * 100)}}"></md-progress-linear>
-                    <span style="height: {{tempe}}px;"></span>
-                    <span md-colors="{color: 'grey-400'}">Next update</span>
+                
+                <div flex="30" layout="column" layout-align="center start" style="padding-right: 20px;" >
+                    <span style="height: 15px;"></span>
+                    <md-progress-linear md-mode="determinate" class="md-display-1 md-accent" value="{{(100 - ((lastPollTime / 30) * 100))}}"></md-progress-linear>
+                    <span style="height: 15px;"></span>
+                    <span md-colors="{color: 'grey-400'}">update</span>
                 </div>
+                
                 <div flex></div>
                 
             </div>
