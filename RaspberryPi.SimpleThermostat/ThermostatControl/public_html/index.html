@@ -28,21 +28,26 @@
 		
 		<!-- Your application bootstrap  --> 
         <script type="text/javascript">
-            var task_nr = 0;
-			
+            
+            
+
 			
             var app = angular.module('ThermoApp', ['ngMaterial', 'ngMdIcons', 'ngMessages']);
             app.controller('ThermostatController', ['$scope', '$mdDialog', '$mdMedia', '$timeout','$mdToast', 'socket', function ($scope, $mdDialog, $mdMedia, $timeout, $mdToast, socket) {
 				$scope.init = function(){
-					socket.emit('cmd', 'start');
-					$scope.btnSize = "150";
-                                        $scope.temp = "0";
-                                        $scope.humidity = "0";
-                                        $scope.off = "off";
-                                        $scope.on = "on";
-                                        $scope.lastUpdate = "";
-                                        getDate($scope.theDate);
-                                        //alert("hier");
+                                    //socket.emit('cmd', 'start');
+                                    $scope.btnSize = "150";
+                                    //$scope.temp = "0";
+                                    //$scope.humidity = "0";
+                                    $scope.off = "off";
+                                    $scope.on = "on";
+                                    //$scope.lastUpdate = "";
+                                    $scope.lastUpdate = new Date();
+                                    //$scope.heaterState = "on";
+                                    getDate($scope.theDate);
+                                    doPolling();
+
+                                    //alert("hier");
 				};	
                              
                                 socket.on('status', function(data){
@@ -64,9 +69,9 @@
                                 };
 				
 				socket.on('conditions', function(data){
-                                    $scope.temp = data.t;
-                                    $scope.humidity = data.h;
-                                    $scope.lastUpdate = data.d;
+                                    $scope.temp = data.t + "c   ";
+                                    $scope.humidity = data.h + "%";
+                                    $scope.lastUpdate = new Date(data.d);
                                     $scope.heaterState = data.s ? $scope.on: $scope.off;
 				});
 				
@@ -75,12 +80,13 @@
                                     socket.emit("cmd", cmd);
                                 };
                                 
+                               
                                 var getDate = function(){
                                     var dat = new Date();
                                     $scope.theDate = dat.toLocaleDateString() + " " + dat.toLocaleTimeString();
+                                    $scope.lastPollTime = parseInt(((dat - $scope.lastUpdate) / 1000)).toString();
                                     $timeout(getDate, 1000);
                                 };
-                                
 			}]);
 			
 			app.config(function ($mdThemingProvider) {
@@ -135,62 +141,111 @@
         </style>
     </head>
     <body ng-app="ThermoApp" layout="column" ng-cloak>
-	<div ng-controller="ThermostatController" data-ng-init="init()">
-	<md-content layout="column">
-		<md-toolbar class="md-accent">
-			<div class="md-toolbar-tools">
-				<h2 >{{theDate}}</h2>
-			</div>
-		</md-toolbar>
-                <div layout="row">
-			<div flex></div>
-			<md-card flex="80" class="md-padding" layout="row" layout-align="center center">
-                            Last update: {{lastUpdate}}
-			</md-card>
-			<div flex></div>
-		</div>   
-		<div layout="row">
-			<div flex></div>
-			<md-card flex="80" class="md-padding" layout="row" layout-align="center center">
-				
-				<h1 style="color: orange;"><md-icon md-font-set="fa fa-fw fa-thermometer-three-quarters"  class="md-toggle-icon"></md-icon>{{temp}}C</h1>
-                                <div flex="10"></div>
-				<h1 style="color: blue;"><md-icon md-font-set="fa fa-fw fa-tint"  class="md-toggle-icon"></md-icon>{{humidity}}%</h1>
-				
-			</md-card>
-			<div flex></div>
-		</div>
-		<div layout="row">
-			<div flex></div>
-			<md-card flex="80" class="md-padding" layout="row" layout-align="center center">
-				
-				<div layout="row" layout-align="center center">
-					<div flex></div>
-					<md-button class="md-raised md-primary" aria-label="OFF" ng-click="sendCmd(off);" style="width:{{btnSize}}px; height: {{btnSize}}px; background-color: lightblue;">
-						<md-icon md-font-set="fa fa-fw fa-4x fa-star-of-life"  class="md-toggle-icon"></md-icon>
-					</md-button>
-					<div flex></div>
-					<md-button class="md-raised md-primary" aria-label="ON" ng-click="sendCmd(on);" style="width:{{btnSize}}px; height: {{btnSize}}px; background-color: orange;">
-						<md-icon md-font-set="fa fa-fw fa-4x fa-fire"  class="md-toggle-icon"></md-icon>
-					</md-button>
-					<div flex></div>
-				</div>
-				
-			</md-card>
-			<div flex></div>
-		</div>
-                <div layout="row">
-			<div flex></div>
-			<md-card flex="80" class="md-padding" layout="row" layout-align="center center">
-                            <h1>
-                                Heater state: 
-                                <span  ng-show="heaterState == on"><md-icon md-font-set="fa fa-fw fa-fire"  class="md-toggle-icon" style="color: orange;" ></md-icon></span>
-                                <span  ng-show="heaterState == off"><md-icon md-font-set="fa fa-fw fa-star-of-life"  class="md-toggle-icon"  style="color: lightblue;"></md-icon></span>
-                            </h1>
-			</md-card>
-			<div flex></div>
-		</div>   
+        <div flex layout="column" ng-controller="ThermostatController" data-ng-init="init()" >
+           
+            <md-toolbar class="md-accent">
+                    <div class="md-toolbar-tools">
+                            <h2 >{{theDate}}</h2>
+                    </div>
+            </md-toolbar>
+            
+            <div flex layout="row" layout-align="center center" style="background-image: linear-gradient(darkgray, gray);font-size: 3em;">
+                <span class="md-display-4" md-colors="{color: 'accent'}">{{temp}}</span>
+                <span class="md-display-2" md-colors="{color: 'blue-300'}"><br /><br />{{humidity}}</span>
+                
+            </div>
+            
+            
+            <div class="md-padding" layout="row" layout-align="center center">
+                <div flex></div>
+                <div flex="30" layout="column" layout-align="center end">
+                    <span class="md-display-1" md-colors="{color: 'accent'}">{{heaterState}}</span>
+                    <span md-colors="{color: 'grey-400'}">state</span>
+                </div>
+                <md-button class="md-flat md-primary" aria-label="OFF" ng-show="heaterState == off" ng-click="sendCmd(on);" style="width:{{btnSize}}px; height: {{btnSize}}px;" layout="column" layout-align="center center">
+                        <md-icon md-font-set="fa fa-fw fa-6x fa-toggle-on"  color="lightgray" class="md-toggle-icon fa-rotate-180"></md-icon>
+                </md-button>
+                <md-button class="md-flat md-primary" aria-label="ON" ng-show="heaterState == on" ng-click="sendCmd(off);" style="width:{{btnSize}}px; height: {{btnSize}}px;" layout="column" layout-align="center center">
+                        <md-icon md-font-set="fa fa-fw fa-6x fa-toggle-on" color="darkorange" class="md-toggle-icon"></md-icon>
+                </md-button>
+                <div flex="30" layout="column" layout-align="center start">
+                    <span style="height: {{tempe = 15;tempe}}px;"></span>
+                    <md-progress-linear md-mode="determinate" class="md-display-1 md-accent" value="{{((lastPollTime / 30) * 100)}}"></md-progress-linear>
+                    <span style="height: {{tempe}}px;"></span>
+                    <span md-colors="{color: 'grey-400'}">Next update</span>
+                </div>
+                <div flex></div>
+                
+            </div>
+        <!--
+	
+	<md-content flex>
+            <div layout="column">
+                <md-toolbar class="md-accent">
+                        <div class="md-toolbar-tools">
+                                <h2 >{{theDate}}</h2>
+                        </div>
+                </md-toolbar>
+                <div flex layout="row" layout-align="center center">
+                    <span><md-icon md-font-set="fa fa-fw fa-4x  fa-fire"  class="md-toggle-icon" style="color: orange;" ></md-icon></span>
+                    <span><md-icon md-font-set="fa fa-fw fa-tint"  class="md-toggle-icon"  style="color: lightblue;"></md-icon></span>
+                </div>
+                <div style="background-color: darkgray;" layout="row" layout-align="center center">
+                    s
+                </div>
+            
+            <div layout="row">
+                    <div flex></div>
+                    <md-card flex="80" class="md-padding" layout="row" layout-align="center center">
+                        Last update: {{lastUpdate}}
+                    </md-card>
+                    <div flex></div>
+            </div>   
+            <div layout="row">
+                    <div flex></div>
+                    <md-card flex="80" class="md-padding" layout="row" layout-align="center center">
+
+                            <h1 style="color: orange;"><md-icon md-font-set="fa fa-fw fa-thermometer-three-quarters"  class="md-toggle-icon"></md-icon>{{temp}}C</h1>
+                            <div flex="10"></div>
+                            <h1 style="color: blue;"><md-icon md-font-set="fa fa-fw fa-tint"  class="md-toggle-icon"></md-icon>{{humidity}}%</h1>
+
+                    </md-card>
+                    <div flex></div>
+            </div>
+            <div layout="row">
+                    <div flex></div>
+                    <md-card flex="80" class="md-padding" layout="row" layout-align="center center">
+
+                            <div layout="row" layout-align="center center">
+                                    <div flex></div>
+                                    <md-button class="md-raised md-primary" aria-label="OFF" ng-click="sendCmd(off);" style="width:{{btnSize}}px; height: {{btnSize}}px; background-color: lightblue;">
+                                            <md-icon md-font-set="fa fa-fw fa-4x fa-star-of-life"  class="md-toggle-icon"></md-icon>
+                                    </md-button>
+                                    <div flex></div>
+                                    <md-button class="md-raised md-primary" aria-label="ON" ng-click="sendCmd(on);" style="width:{{btnSize}}px; height: {{btnSize}}px; background-color: orange;">
+                                            <md-icon md-font-set="fa fa-fw fa-4x fa-fire"  class="md-toggle-icon"></md-icon>
+                                    </md-button>
+                                    <div flex></div>
+                            </div>
+
+                    </md-card>
+                    <div flex></div>
+            </div>
+            <div layout="row">
+                    <div flex></div>
+                    <md-card flex="80" class="md-padding" layout="row" layout-align="center center">
+                        <h1>
+                            Heater state: 
+                            <span  ng-show="heaterState == on"><md-icon md-font-set="fa fa-fw fa-fire"  class="md-toggle-icon" style="color: orange;" ></md-icon></span>
+                            <span  ng-show="heaterState == off"><md-icon md-font-set="fa fa-fw fa-star-of-life"  class="md-toggle-icon"  style="color: lightblue;"></md-icon></span>
+                        </h1>
+                    </md-card>
+                    <div flex></div>
+            </div>   
+            
+            </div>
 	</md-content>
+        -->
 	</div>
     </body>
 </html>

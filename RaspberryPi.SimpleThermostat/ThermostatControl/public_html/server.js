@@ -96,5 +96,5 @@ function readSensor(socket){
 
 function getTheDate(){
     var dat = new Date();
-    return dat.toLocaleDateString() + " " + dat.toLocaleTimeString();
+    return dat;
 };
