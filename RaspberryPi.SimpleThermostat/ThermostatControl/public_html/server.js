@@ -9,10 +9,31 @@ var dht11Pin = 25;
 var started = false;
 var heaterIsOn = false;
 var accesKey = "59997d31-3bd6-4565-b564-362920cf644e";
+var timerSocket = null;
+var scheduleOverride = false;
+var switchOnByTimer = false;
 
 gpio.setMode(gpio.MODE_BCM);
 gpio.setup(relayPin, gpio.DIR_OUT, logSetup);
 http.listen(8080); //listen to port 8080
+
+setInterval(function(){
+    // check if the timer says the heater should activate
+    switchOnByTimer = false;
+    if(checkSchedule()){
+        switchOnByTimer = true;
+    }
+    
+    // activate or deactivate if the schedule isn't overridden
+    if(scheduleOverride === false){
+        write(switchOnByTimer);
+    }
+    
+    // timerSocket is assigned a value when this node is accessed and socket.io is initialized
+    if(timerSocket){
+        //timerSocket.emit("timer", getTheDate().getDay());
+    }
+}, 60000);
 
 
 function handler (req, res) { //create server
@@ -34,6 +55,7 @@ function handler (req, res) { //create server
 
 
 io.sockets.on('connection', function (socket) {// WebSocket Connection
+  timerSocket = socket;
   socket.on('cmd', function(data) { //get light switch status from client
     console.log("cmd data received: " + data); 
     
@@ -87,9 +109,9 @@ function readSensor(socket){
     sensor.read(11, dht11Pin, function(err, temperature, humidity) {
         if (!err) {
             console.log('date: ' + getTheDate() + ', temp: ' + temperature.toFixed(0) + '°C, ' +
-                'humidity: ' + humidity.toFixed(0) + '%' + ", heater is on: " + heaterIsOn
+                'humidity: ' + humidity.toFixed(0) + '%' + ", heater is on: " + heaterIsOn + ", scheduled on: " + checkSchedule()
             );
-            socket.emit("conditions", {t:temperature.toFixed(0),h:humidity.toFixed(0),d:getTheDate(),s:heaterIsOn});
+            socket.emit("conditions", {temp:temperature.toFixed(0),hum:humidity.toFixed(0),dat:getTheDate(),stat:heaterIsOn,sched:checkSchedule()});
         }
     });
 }
@@ -98,3 +120,18 @@ function getTheDate(){
     var dat = new Date();
     return dat;
 };
+
+// we want to schedule to turn heating on between 8:00 and 8:30 am
+function checkSchedule(){
+    var theDate = getTheDate();
+    
+    if(theDate.getHours() >= 17 && theDate.getHours() < 22){// turn off
+        return true;
+    }
+    
+    if(theDate.getHours() === 8 && theDate.getMinutes() <= 30){// turn on
+        return true;
+    } else { // turn off
+        return false;
+    }
+}
