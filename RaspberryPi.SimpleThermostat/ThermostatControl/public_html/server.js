@@ -10,7 +10,7 @@ var started = false;
 var heaterIsOn = false;
 var accesKey = "59997d31-3bd6-4565-b564-362920cf644e";
 var timerSocket = null;
-var scheduleOverride = false;
+var scheduleOn = false;
 var switchOnByTimer = false;
 
 gpio.setMode(gpio.MODE_BCM);
@@ -18,21 +18,21 @@ gpio.setup(relayPin, gpio.DIR_OUT, logSetup);
 http.listen(8080); //listen to port 8080
 
 setInterval(function(){
+    
     // check if the timer says the heater should activate
-    switchOnByTimer = false;
-    if(checkSchedule()){
-        switchOnByTimer = true;
+    switchOnByTimer = checkSchedule();
+    
+    var strOnOff = switchOnByTimer ? "ON.": "OFF.";
+    // warn user and activate or deactivate if the scheduler is on
+    if(scheduleOn){
+        if(switchOnByTimer != heaterIsOn){
+            write(switchOnByTimer);
+            console.log("Scheduler sent command to turn heater " + strOnOff);
+        }
+    } else {
+        console.log("Scheduler is overriden but would have switched the heater " + strOnOff);
     }
     
-    // activate or deactivate if the schedule isn't overridden
-    if(scheduleOverride === false){
-        write(switchOnByTimer);
-    }
-    
-    // timerSocket is assigned a value when this node is accessed and socket.io is initialized
-    if(timerSocket){
-        //timerSocket.emit("timer", getTheDate().getDay());
-    }
 }, 60000);
 
 
@@ -59,6 +59,22 @@ io.sockets.on('connection', function (socket) {// WebSocket Connection
   socket.on('cmd', function(data) { //get light switch status from client
     console.log("cmd data received: " + data); 
     
+    switch(data){
+        case "on":
+            write(true);
+            break;
+        case "off":
+            write(false);
+            break;
+        case "scheduleOn":
+            scheduleOn = true;
+            break;
+        case "scheduleOff":
+            scheduleOn = false;
+            break;
+            
+    }
+    /*
     //startReadings(socket);
     if (data === "on") {
         write(true);
@@ -68,6 +84,8 @@ io.sockets.on('connection', function (socket) {// WebSocket Connection
         write(false);
     }
     
+    if(data == )
+    */
     readSensor(socket);
   });
   
@@ -108,10 +126,15 @@ function readSensor(socket){
     readRelayState();   
     sensor.read(11, dht11Pin, function(err, temperature, humidity) {
         if (!err) {
-            console.log('date: ' + getTheDate() + ', temp: ' + temperature.toFixed(0) + '°C, ' +
-                'humidity: ' + humidity.toFixed(0) + '%' + ", heater is on: " + heaterIsOn + ", scheduled on: " + checkSchedule()
+            console.log(
+                    'date: ' + getTheDate() + 
+                    ', temp: ' + temperature.toFixed(0) + '°C, ' +
+                    'humidity: ' + humidity.toFixed(0) + '%, ' + 
+                    "heater is on: " + heaterIsOn + 
+                    ", scheduled to turn heater on: " + checkSchedule(),
+                    ", schedule is activated: " + scheduleOn
             );
-            socket.emit("conditions", {temp:temperature.toFixed(0),hum:humidity.toFixed(0),dat:getTheDate(),stat:heaterIsOn,sched:checkSchedule()});
+            socket.emit("conditions", {temp:temperature.toFixed(0),hum:humidity.toFixed(0),dat:getTheDate(),stat:heaterIsOn,sched:checkSchedule(),schedIsOn:scheduleOn});
         }
     });
 }
@@ -124,14 +147,25 @@ function getTheDate(){
 // we want to schedule to turn heating on between 8:00 and 8:30 am
 function checkSchedule(){
     var theDate = getTheDate();
+    var dayOfWeek = theDate.getDay();
     
-    if(theDate.getHours() >= 17 && theDate.getHours() < 22){// turn off
-        return true;
-    }
-    
-    if(theDate.getHours() === 8 && theDate.getMinutes() <= 30){// turn on
-        return true;
-    } else { // turn off
+    if(theDate.getHours() >= 1 && theDate.getHours() < 8 && dayOfWeek > 0 && dayOfWeek < 6 ){// turn off
+        console.log("Schedule checked: heater turned off between 1:00 and 8:00 from monday to friday.");
         return false;
     }
+    
+    if(theDate.getHours() === 8 && theDate.getMinutes() <= 30 && dayOfWeek > 0 && dayOfWeek < 6 ){// turn on
+        console.log("Schedule checked: heating turned on between 8:00 and 8:30 from monday to friday.");
+        return true;
+    }
+    
+    if(theDate.getHours() === 8 && theDate.getMinutes() > 30 && dayOfWeek > 0 && dayOfWeek < 6 ){// turn off
+        console.log("Schedule checked: turning heater off again after morning heating period.");
+        return false;
+    }
+    
+    // nothing sheduled
+    var strHeaterIsOn = heaterIsOn ? "on" : "off";
+    console.log("Schedule checked: nothing scheduled, setting heater to user choice (" + strHeaterIsOn + ").");
+    return heaterIsOn; // turn on
 }

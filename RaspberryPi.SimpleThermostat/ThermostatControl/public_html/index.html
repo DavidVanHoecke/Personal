@@ -35,19 +35,12 @@
             var app = angular.module('ThermoApp', ['ngMaterial', 'ngMdIcons', 'ngMessages']);
             app.controller('ThermostatController', ['$scope', '$mdDialog', '$mdMedia', '$timeout','$mdToast', 'socket', function ($scope, $mdDialog, $mdMedia, $timeout, $mdToast, socket) {
 				$scope.init = function(){
-                                    //socket.emit('cmd', 'start');
                                     $scope.btnSize = "150";
-                                    //$scope.temp = "0";
-                                    //$scope.humidity = "0";
                                     $scope.off = "off";
                                     $scope.on = "on";
-                                    //$scope.lastUpdate = "";
                                     $scope.lastUpdate = new Date();
-                                    //$scope.heaterState = "on";
                                     getDate($scope.theDate);
                                     doPolling();
-
-                                    //alert("hier");
 				};	
                              
                                 socket.on('status', function(data){
@@ -73,12 +66,26 @@
                                 };
 				
 				socket.on('conditions', function(data){
-                                    $scope.temp = data.temp + "c   ";
-                                    $scope.humidity = data.hum + "%";
+                                    $scope.temp = data.temp;
+                                    $scope.humidity = data.hum;
                                     $scope.lastUpdate = new Date(data.dat);
                                     $scope.heaterState = data.stat ? $scope.on: $scope.off;
-                                    $scope.scheduled = data.sched;
+                                    $scope.bHeaterState = $scope.heaterState === $scope.on ? true: false;
+                                    $scope.scheduled = data.schedIsOn;
 				});
+                                
+                                $scope.toggleHeating = function(){
+                                    var cmdState = $scope.bHeaterState ? $scope.on: $scope.off;
+                                    $scope.sendCmd(cmdState);
+                                    showToast("Sent command to turn heater: " + cmdState);
+                                }
+                                
+                                $scope.toggleScheduler = function(){
+                                    $scope.scheduled = !$scope.scheduled;
+                                    socket.emit('cmd', $scope.scheduled ? "scheduleOn" : "scheduleOff");
+                                    var strOnOff = $scope.scheduled ? "on" : "off";
+                                    showToast("Sent command to turn schedule: " + strOnOff);
+                                }
 				
                                 $scope.sendCmd = function(cmd){
                                     showToast("Sent command to turn heater " + cmd);
@@ -155,43 +162,39 @@
             </md-toolbar>
             
             <div flex layout="row" layout-align="center center" style="background-image: linear-gradient(darkgray, gray);font-size: 3em;">
-                <span class="md-display-4" md-colors="{color: 'accent'}">{{temp}}</span>
-                <span class="md-display-2" md-colors="{color: 'blue-300'}"><br /><br />{{humidity}}</span>
+                <div layout="row" layout-align="center center">
+                    <span class="md-display-4" md-colors="{color: 'accent'}">{{temp}}</span>
+                    <i class="fas fa-thermometer-three-quarters fa-2x" md-colors="{color: 'accent'}"></i>
+                </div>
+                <div layout="column" layout-align="center center">
+                    <br /><br />
+                    <div layout="row" layout-align="center center">
+                        <span class="md-display-2" md-colors="{color: 'blue-300'}">{{humidity}}</span>
+                        <i class="fas fa-tint fa-xs" md-colors="{color: 'blue-300'}"></i>
+                    </div>
+                </div>
                 
             </div>
             
             
             <div class="md-padding" layout="row" layout-align="center center">
                 
-                <div flex></div>
-                
-                <div flex="30" layout="row" layout-align="center center">
-                    <div layout="column" layout-align="center end">
-                        <span class="md-display-1" md-colors="{color: 'accent'}">{{heaterState}}</span>
-                        <span md-colors="{color: 'grey-400'}">state</span>
-                    </div>
-                    <div>&nbsp;&nbsp;&nbsp;</div>
-                    <div layout="column" layout-align="center end">
-                        <span class="md-display-1" md-colors="{color: 'accent'}">{{scheduled}}</span>
-                    <span md-colors="{color: 'grey-400'}">schedule</span>
-                    </div>
+                <div flex="33" layout="row" layout-align="center end">
+                    <md-button layout="column" layout-align="center center" ng-click="toggleScheduler()" style="margin-top: 0px;"  md-colors="scheduled == true ? {color:  'accent'}: {color: 'grey-400'}" layout-padding>
+                        <i class="fas fa-calendar-alt fa-4x"></i>
+                    </md-button>
                 </div>
                 
-                <md-button class="md-flat md-primary" aria-label="OFF" ng-show="heaterState == off" ng-click="sendCmd(on);" style="width:{{btnSize}}px; height: {{btnSize}}px;" layout="column" layout-align="center center">
-                        <md-icon md-font-set="fa fa-fw fa-8x fa-toggle-on"  color="lightgray" class="md-toggle-icon fa-rotate-180"></md-icon>
-                </md-button>
-                <md-button class="md-flat md-primary" aria-label="ON" ng-show="heaterState == on" ng-click="sendCmd(off);" style="width:{{btnSize}}px; height: {{btnSize}}px;" layout="column" layout-align="center center">
-                        <md-icon md-font-set="fa fa-fw fa-8x fa-toggle-on" color="darkorange" class="md-toggle-icon"></md-icon>
-                </md-button>
-                
-                <div flex="30" layout="column" layout-align="center start" style="padding-right: 20px;" >
+                <div flex="33" layout="row" layout-align="center center">
+                    <md-switch ng-change="toggleHeating()" ng-model="bHeaterState"></md-switch>
+                </div>
+
+                <div flex="33" layout="column" layout-align="center stcart" style="padding-right: 20px;" >
                     <span style="height: 15px;"></span>
                     <md-progress-linear md-mode="determinate" class="md-display-1 md-accent" value="{{(100 - ((lastPollTime / 30) * 100))}}"></md-progress-linear>
                     <span style="height: 15px;"></span>
-                    <span md-colors="{color: 'grey-400'}">update</span>
+                    <span md-colors="{color: 'grey-400'}" class="md-caption">UPDATE</span>
                 </div>
-                
-                <div flex></div>
                 
             </div>
 	</div>
