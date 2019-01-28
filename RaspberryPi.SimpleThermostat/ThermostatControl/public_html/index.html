@@ -38,6 +38,8 @@
                                     $scope.btnSize = "150";
                                     $scope.off = "off";
                                     $scope.on = "on";
+                                    $scope.minimalTemp = 15;
+                                    //$scope.systemSetToManual = null;
                                     $scope.lastUpdate = new Date();
                                     getDate($scope.theDate);
                                     doPolling();
@@ -47,9 +49,9 @@
                                     showToast(data);
 				});
                                 
-                                socket.on('timer', function(data){
-                                    showToast("timer-> " + data);
-				});
+//                                socket.on('timer', function(data){
+//                                    showToast("timer-> " + data);
+//				});
                                 
                                 var showToast = function(msg) {
                                     $mdToast.show(
@@ -58,7 +60,7 @@
                                         .position("bottom")
                                         .hideDelay(3000)
                                     );
-                                }
+                                };
                                 
                                 var doPolling = function() {
                                     socket.emit('cmd', 'start');
@@ -72,21 +74,50 @@
                                     $scope.heaterState = data.stat ? $scope.on: $scope.off;
                                     $scope.bHeaterState = $scope.heaterState === $scope.on ? true: false;
                                     $scope.scheduled = data.schedIsOn;
+                                    $scope.manualOn = data.mOn;
+                                    
+                                    // check for stale data
+                                    if($scope.desiredTemp != data.dTemp){
+                                        showToast("Updating desired temperature with value from thermostat server.")
+                                    }
+                                    
+                                    $scope.desiredTemp = data.dTemp;
 				});
                                 
-                                $scope.toggleHeating = function(){
-                                    var cmdState = $scope.bHeaterState ? $scope.on: $scope.off;
+                                $scope.toggleManualOn = function(){
+                                    $scope.manualOn = !$scope.manualOn;
+                                    var cmdState = $scope.manualOn ? $scope.on: $scope.off;
                                     $scope.sendCmd(cmdState);
                                     showToast("Sent command to turn heater: " + cmdState);
-                                }
-                                
+                                };
+                             
                                 $scope.toggleScheduler = function(){
                                     $scope.scheduled = !$scope.scheduled;
                                     socket.emit('cmd', $scope.scheduled ? "scheduleOn" : "scheduleOff");
                                     var strOnOff = $scope.scheduled ? "on" : "off";
                                     showToast("Sent command to turn schedule: " + strOnOff);
-                                }
-				
+                                };
+                                
+                                $scope.modDesiredTemp = function(doIncrease){
+                                    if(!$scope.desiredTemp){
+                                        $scope.desiredTemp = $scope.minimalTemp;
+                                    }
+                                    
+                                    if(doIncrease){
+                                        $scope.desiredTemp++;
+                                    } else {
+                                        $scope.desiredTemp--;
+                                    }
+                                    socket.emit("cmd", "setDesiredTemp:" + $scope.desiredTemp.toString());
+                                    showToast("Set desired temp to: " + $scope.desiredTemp.toString());
+                                };
+                                
+                                /*
+                                $scope.setSystemToManual = function(setToManual){
+                                    socket.emit('cmd', setToManual ? "scheduleOn" : "scheduleOff");
+                                    $scope.systemSetToManual = setToManual;
+                                };
+				*/
                                 $scope.sendCmd = function(cmd){
                                     showToast("Sent command to turn heater " + cmd);
                                     socket.emit("cmd", cmd);
@@ -162,9 +193,25 @@
             </md-toolbar>
             
             <div flex layout="row" layout-align="center center" style="background-image: linear-gradient(darkgray, gray);font-size: 3em;">
-                <div layout="row" layout-align="center center">
-                    <span class="md-display-4" md-colors="{color: 'accent'}">{{temp}}</span>
-                    <i class="fas fa-thermometer-three-quarters fa-2x" md-colors="{color: 'accent'}"></i>
+                <div layout="column"  layout-align="center center">
+                    <md-button ng-click="modDesiredTemp(true)">
+                        <span class="md-display-1" md-colors="{color: 'accent'}">+</span>
+                            
+<!--                        <i class="fas fa-sort-up  fa-4x" md-colors="{color: 'warn'}"></i>-->
+                    </md-button>
+                    <div layout="row" layout-align="center center">
+                        <span class="md-display-2" md-colors="{color: 'accent'}">{{desiredTemp}}</span>
+                    </div>
+                    <md-button ng-click="modDesiredTemp(false)">
+                        <span class="md-display-1" md-colors="{color: 'accent'}">-</span>
+<!--                        <i class="fas fa-sort-down fa-4x" md-colors="{color: 'blue'}"></i>-->
+                    </md-button>
+                </div>
+                <div layout="column"  layout-align="center center">
+                    <div layout="row" layout-align="center center">
+                        <span class="md-display-4" md-colors="{color: 'accent'}">{{temp}}</span>
+                        <i class="fas fa-thermometer-three-quarters fa-2x" md-colors="{color: 'accent'}"></i>
+                    </div>
                 </div>
                 <div layout="column" layout-align="center center">
                     <br /><br />
@@ -176,7 +223,7 @@
                 
             </div>
             
-            
+            <md-progress-linear md-mode="determinate" class="md-display-1 md-warn" value="{{(100 - ((lastPollTime / 30) * 100))}}"></md-progress-linear>
             <div class="md-padding" layout="row" layout-align="center center">
                 
                 <div flex="33" layout="row" layout-align="center end">
@@ -185,16 +232,26 @@
                     </md-button>
                 </div>
                 
-                <div flex="33" layout="row" layout-align="center center">
-                    <md-switch ng-change="toggleHeating()" ng-model="bHeaterState"></md-switch>
+                <div flex="33" layout="row" layout-align="center end" ng-model="bHeaterState"  md-colors="bHeaterState == true ? {color:  'warn'}: {color: 'grey-400'}" layout-padding>
+                    <i class="fas fa-fire fa-4x"></i>
                 </div>
+                
+                <div flex="33" layout="row" layout-align="center end">
+                    <md-button layout="column" layout-align="center center" ng-click="toggleManualOn()" style="margin-top: 0px;"  md-colors="manualOn == true ? {color:  'accent'}: {color: 'grey-400'}" layout-padding>
+                        <i class="fas fa-power-off fa-4x"></i>
+                    </md-button>
+                </div>
+                
+<!--                <div flex="33" layout="row" layout-align="center center">
+                    <md-switch ng-change="toggleHeating()" ng-model="bHeaterState"></md-switch>
+                </div>-->
 
-                <div flex="33" layout="column" layout-align="center stcart" style="padding-right: 20px;" >
+<!--                <div flex="33" layout="column" layout-align="center stcart" style="padding-right: 20px;" >
                     <span style="height: 15px;"></span>
                     <md-progress-linear md-mode="determinate" class="md-display-1 md-accent" value="{{(100 - ((lastPollTime / 30) * 100))}}"></md-progress-linear>
                     <span style="height: 15px;"></span>
                     <span md-colors="{color: 'grey-400'}" class="md-caption">UPDATE</span>
-                </div>
+                </div>-->
                 
             </div>
 	</div>
